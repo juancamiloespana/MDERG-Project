@@ -1,0 +1,184 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{cite}
+
+\title{Inteligencia Artificial Explicable y Confiable\\
+Fundamentada en Modelos Físicos Analíticos\\[0.5em]
+\large Borrador de Introducción -- Propuesta de Investigación\\
+Convocatoria Grupos de Investigación Uniovi 2026--2027}
+
+\author{Universidad de Oviedo}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+
+La adopción de sistemas de aprendizaje profundo en ámbitos de alta responsabilidad
+como la sanidad, las finanzas, la infraestructura crítica y la administración pública
+ha situado la transparencia y la confianza entre los requisitos centrales de estos sistemas,
+al margen de su rendimiento predictivo \cite{haufe2026explainable, eu_ai_act_2024}.
+La naturaleza opaca de estos modelos dificulta que los operadores puedan validar,
+auditar y asumir responsabilidad sobre sus decisiones \cite{binkyte2026trustworthy, qi2026towards}.
+A esta dificultad técnica se añade una dimensión regulatoria: el Reglamento General
+de Protección de Datos (RGPD) y el Reglamento (UE) 2024/1689 de Inteligencia Artificial
+establecen obligaciones concretas de explicabilidad y trazabilidad para sistemas
+clasificados como de alto riesgo \cite{eu_ai_act_2024}.
+
+La Inteligencia Artificial Explicable (XAI) aborda esta opacidad mediante métodos
+que pueden clasificarse según tres criterios: el momento de aplicación
+(post-hoc sobre modelos ya entrenados, o ante-hoc con interpretabilidad intrínseca),
+el alcance (local para decisiones individuales, o global para el comportamiento general
+del modelo) y la dependencia arquitectónica (métodos agnósticos o específicos
+de una arquitectura) \cite{lyberatos2026xai, palikhe2025towards}.
+Entre los métodos de referencia se encuentran la Propagación de Relevancia por Capas
+(LRP) \cite{bach2015pixel}, las Explicaciones Locales Interpretables Agnósticas del
+Modelo (LIME) \cite{ribeiro2016trust}, las Explicaciones Aditivas de Shapley
+(SHAP) \cite{lundberg2017unified}, la Localización Visual por Gradientes Ponderados
+por Clase (Grad-CAM, del inglés \textit{Gradient-weighted Class Activation Mapping})
+\cite{selvaraju2017grad} y los Gradientes Integrados \cite{sundararajan2017axiomatic}.
+Trabajos posteriores han cuestionado la fiabilidad de estos métodos:
+Adebayo et al.\ mostraron que varios de ellos son independientes
+de los parámetros del modelo entrenado \cite{adebayo2018sanity}, y Ghorbani et al.\
+demostraron que perturbaciones imperceptibles en la entrada pueden modificar sustancialmente
+los mapas de saliencias sin alterar la predicción \cite{ghorbani2019interpretation}.
+
+En paralelo, el Grupo de Expertos de Alto Nivel sobre IA de la Comisión Europea
+formalizó el concepto de Inteligencia Artificial de Confianza (\textit{Trustworthy AI})
+en torno a siete dimensiones: supervisión y control humano, robustez técnica y
+seguridad, privacidad y gobernanza de datos, transparencia y explicabilidad,
+diversidad y equidad, bienestar social y medioambiental, y rendición de cuentas
+\cite{eu_ai_act_2024}.
+La explicabilidad es transversal a las demás dimensiones, ya que sin ella no es posible
+verificar el cumplimiento de las restantes \cite{binkyte2026trustworthy, binkyte2026causality}.
+La Ley de IA de la UE (Reglamento 2024/1689) concreta estas obligaciones:
+el Artículo 86 reconoce el derecho individual a recibir una explicación de las
+decisiones de sistemas de alto riesgo; los Anexos~I y III delimitan los ámbitos
+de aplicación, entre ellos dispositivos médicos, infraestructura crítica,
+evaluación crediticia, selección de empleo y biometría,
+con entrada en vigor el 2~de agosto de 2026 \cite{eu_ai_act_2024}.
+
+\subsection{Limitaciones actuales de XAI}
+
+La investigación reciente ha identificado una debilidad de base en los métodos de XAI:
+el diseño \textit{algorithm-first} \cite{haufe2026explainable}.
+Haufe et al.\ argumentan que los métodos dominantes, incluidos SHAP y Grad-CAM,
+se desarrollaron como algoritmos sin una definición previa del problema que deben resolver
+ni criterios objetivos de corrección \cite{haufe2026explainable}.
+Como resultado, estos métodos pueden atribuir importancia a variables que están
+correlacionadas con el objetivo pero que no son causalmente relevantes,
+generando atribuciones que los operadores interpretan como válidas
+sin que exista garantía de que lo sean
+\cite{haufe2026explainable, adebayo2018sanity}.
+
+Un segundo problema es la ausencia de verdad de terreno (\textit{ground-truth}) objetiva
+para evaluar la corrección de las explicaciones.
+Haufe et al.\ señalan que no existe ground-truth para el problema de XAI en conjuntos
+de datos reales, lo que obliga a recurrir a sustitutos como el juicio humano o métricas
+de fidelidad que no garantizan la corrección de la explicación
+\cite{haufe2026explainable}.
+Palikhe et al.\ documentan la misma limitación en el ámbito de los modelos de lenguaje,
+donde las verdades de terreno explicativas son con frecuencia inaccesibles \cite{palikhe2025towards}.
+Gipi\v{s}kis y Kurasova proponen las Tarjetas de Evaluación de XAI como mecanismo
+de estandarización, que exigen declarar el contexto de validez y el riesgo de
+manipulación de cada métrica \cite{gipiskis2026evaluation}.
+Esta situación guarda paralelismo con la saturación que afecta a los
+\textit{benchmarks} generales de IA: en el primer semestre de 2026, evaluaciones como
+MMLU-Pro o GPQA Diamond presentan diferencias entre modelos dentro del margen de ruido
+estadístico, lo que reduce su utilidad discriminativa
+\cite{kili_benchmarks_2026, stanford_hai_index_2026}.
+
+Los modelos de aprendizaje profundo tienden a capturar correlaciones presentes en los
+datos de entrenamiento que no corresponden a mecanismos causales del fenómeno estudiado
+\cite{binkyte2026causality, ghorbani2019interpretation}.
+En el análisis de electroencefalografía (EEG), por ejemplo, los clasificadores de
+crisis epilépticas pueden aprender a correlacionarse con artefactos musculares o de
+movimiento ocular en lugar de con los patrones de actividad ictal \cite{lyberatos2026xai}.
+Los métodos post-hoc actuales no pueden distinguir estas correlaciones espurias de
+las causalmente válidas sin una referencia externa al dominio:
+la importancia que SHAP o Grad-CAM asignan a una variable no informa sobre si esa
+importancia es causalmente justificada o un artefacto del entrenamiento
+\cite{haufe2026explainable, lyberatos2026xai}.
+
+Desde la perspectiva regulatoria, ninguno de los enfoques actuales de XAI ofrece
+certificabilidad formal de sus explicaciones.
+Los Modelos Causales Estructurales (SCM) constituyen una línea de trabajo relevante:
+Binkyte et al.\ los proponen como mecanismo para resolver los conflictos entre las
+dimensiones de IA de Confianza \cite{binkyte2026trustworthy, binkyte2026causality}.
+Sin embargo, los SCM son estructuras aprendidas de datos y pueden heredar sus sesgos,
+por lo que no garantizan validez fuera de la distribución de entrenamiento
+\cite{binkyte2026causality}.
+El Artículo 86 y los Anexos~I y III de la Ley de IA de la UE exigen trazabilidad
+documental y evaluación de conformidad que los enfoques estadísticos no pueden
+satisfacer de forma verificable e independiente de los datos \cite{eu_ai_act_2024}.
+Qi et al.\ documentan que solo el 30\% de las organizaciones han establecido controles
+de gobernanza adaptados a sistemas autónomos, lo que refleja en parte la ausencia
+de mecanismos formales de auditoría \cite{qi2026towards}.
+
+\subsection{Uso de modelos físicos analíticos en XAI}
+
+Este trabajo parte de la observación de que en numerosos dominios de aplicación
+existen modelos físicos analíticos bien establecidos: ecuaciones de primer principio,
+modelos de estado, modelos farmacocinéticos y farmacodinámicos (PK/PD) y modelos dipolares
+neurofisiológicos, entre otros.
+Estos modelos codifican relaciones causales del dominio con independencia de los datos
+de entrenamiento, y su validez no está restringida a una distribución observada
+\cite{lyberatos2026xai, binkyte2026causality}.
+Lyberatos et al.\ identifican la incorporación de \textit{priors} de dominio,
+como la adyacencia espacial de electrodos o restricciones espectrales de origen
+neurofisiológico, como una dirección necesaria para dotar de fundamento las
+explicaciones en EEG, aunque sin un marco formal que lo generalice \cite{lyberatos2026xai}.
+La propuesta de este trabajo es formalizar ese rol: el modelo físico analítico
+define qué atribuciones son admisibles y permite detectar aquellas que contradigan
+las relaciones causales del dominio.
+
+Una segunda aportación del uso de modelos físicos es la generación de
+verdad de terreno mediante simulación.
+El modelo analítico puede producir escenarios con resultado conocido por construcción
+a partir de las ecuaciones del dominio, sin depender de datos etiquetados,
+lo que permite medir la tasa de error del explicador de forma objetiva y reproducible
+\cite{haufe2026explainable, qi2026towards}.
+Los sistemas agénticos emplean un principio similar mediante \textit{world models}
+para verificar las consecuencias de acciones antes de ejecutarlas \cite{qi2026towards},
+pero este mecanismo no se ha trasladado a la evaluación de explicaciones en sistemas
+de aprendizaje supervisado.
+El protocolo de certificación resultante es compatible con los requisitos de
+trazabilidad documental del Art.~86 y los Anexos~I y III de la Ley de IA
+\cite{eu_ai_act_2024}.
+
+Una tercera función es la detección de correlaciones espurias.
+Si el explicador asigna importancia elevada a una variable que el modelo físico indica
+como irrelevante para el fenómeno, esa discrepancia señala una posible correlación
+espuria aprendida durante el entrenamiento.
+Esta capacidad complementa el paradigma de invarianza causal de Binkyte et al.\
+\cite{binkyte2026trustworthy}: mientras los SCM identifican correlaciones espurias
+por su inestabilidad entre distribuciones, el modelo físico las identifica por
+contradicción directa con las leyes del dominio, con independencia de los datos
+\cite{binkyte2026causality, lyberatos2026xai}.
+Que la detección no dependa de los datos de entrenamiento es relevante para la
+certificación formal, ya que evita la circularidad de validar el modelo con los
+mismos datos con que fue entrenado \cite{eu_ai_act_2024}.
+
+Este trabajo propone el marco de \textbf{Inteligencia Artificial Explicable y Confiable
+Fundamentada en Modelos Físicos Analíticos} (PG-XAI, del inglés
+\textit{Physics-Grounded XAI}), que integra modelos físicos analíticos como
+referencia externa de fidelidad para explicadores de aprendizaje automático
+en entornos regulados.
+El objetivo es desarrollar y evaluar los tres mecanismos descritos en
+\textbf{[CASOS DE APLICACIÓN]}.
+La Sección~2 revisa el estado del arte en XAI y modelos físicos en los
+dominios considerados; la Sección~3 formaliza el marco PG-XAI;
+la Sección~4 describe el diseño experimental; la Sección~5 presenta
+el plan de trabajo para el periodo 2026--2027.
+
+\bibliographystyle{unsrt}
+\bibliography{ref}
+
+\end{document}
